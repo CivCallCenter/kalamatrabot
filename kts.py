@@ -277,7 +277,6 @@ class OliveClientProtocol(SpawningClientProtocol):
                     self.send_chat("/tell " + package["name"] + " " + "CSO#" + package["cso"] + ": " + package["content"])
                 else:
                     self.send_chat("/tell " + package["name"] + " " + package["content"])
-                ds_q.put({"key":"relay", "channel":package["channel"], "content":"welcome messages for " + package["name"] + " queued"})
             elif package["key"] == "shutdown":
                 reactor.stop()
             else:
