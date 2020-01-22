@@ -33,6 +33,8 @@ buffer = 10
 mc_q = queue.Queue(buffer)
 ds_q = queue.Queue(buffer)
 
+relaySenderID = False
+
 def clean_text_for_discord(text):
     text = text.replace("_", "\_")
     text = text.replace("*", "\*")
@@ -271,7 +273,10 @@ class OliveClientProtocol(SpawningClientProtocol):
             if package["key"] == "debug":
                 ds_q.put({"key":"relay", "channel":package["channel"], "content":"debug relay"})
             elif package["key"] == "messagerelay":
-                self.send_chat("/tell " + package["name"] + " " + package["content"])
+                if relaySenderID:
+                    self.send_chat("/tell " + package["name"] + " " + "CSO#" + package["cso"] + ": " + package["content"])
+                else:
+                    self.send_chat("/tell " + package["name"] + " " + package["content"])
                 ds_q.put({"key":"relay", "channel":package["channel"], "content":"welcome messages for " + package["name"] + " queued"})
             elif package["key"] == "shutdown":
                 reactor.stop()
@@ -396,7 +401,7 @@ async def on_message(ctx):
                 if prefix == ctx.content[0]:
                     await kdb.process_commands(ctx)
                 else:
-                    mc_q.put({"key":"messagerelay", "name":str(ctx.channel.name), "content":ctx.content})
+                    mc_q.put({"key":"messagerelay", "name":str(ctx.channel.name), "content":ctx.content, "cso":str(ctx.author.id)})
             except:
                 pass
         else:
@@ -451,6 +456,17 @@ async def getschematic(ctx, schematicfile):
     await ctx.channel.send(output + "```")
 
 #uncategorised
+@kdb.command(pass_context=True)
+async def togglecsorelay(ctx):
+    """toggles whether or not the cso is specified in message relays"""
+    relaySenderID = not relaySenderID
+    if relaySenderID:
+        await ctx.channel.send("cso relay turned on")
+    else:
+        await ctx.channel.send("cso relay turned off")
+
+
+
 @kdb.command(pass_context=True)
 async def respond(ctx):
     """test command"""
