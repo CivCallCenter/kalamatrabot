@@ -405,7 +405,7 @@ async def on_message(ctx):
                 if prefix == ctx.content[0]:
                     await kdb.process_commands(ctx)
                 else:
-                    mc_q.put({"key":"messagerelay", "name":str(ctx.channel.name), "content":ctx.content, "cso":str(ctx.author.id)})
+                    mc_q.put({"key":"messagerelay", "name":str(ctx.channel.name), "content":ctx.content, "cso":str(ctx.author.discriminator)})
             except:
                 pass
         else:
