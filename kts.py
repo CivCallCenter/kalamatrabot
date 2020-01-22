@@ -162,6 +162,7 @@ class OliveClientProtocol(SpawningClientProtocol):
         print ("oliveclientprotocol setup debug message")
         self.ticker.add_loop(40, self.process_mc_q)
         self.lastLogTime = time.time()
+        self.relaySenderID = False
 
     #serverbound packets
     def send_chat(self, text):
