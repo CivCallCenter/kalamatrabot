@@ -240,7 +240,7 @@ class OliveClientProtocol(SpawningClientProtocol):
                 if p_uuid in self.players:
                     self.players[p_uuid]['display_name'] = p_display_name
             elif p_action == 4:  # REMOVE_PLAYER
-                if p_uuid in self.players and self.players[p_uuid]["name"]["ping"] != -1:
+                if p_uuid in self.players and self.players[p_uuid]["ping"] != -1:
                     if print_player_login_logout:
                         print (timestring() + self.players[p_uuid]["name"] + " left the game")
                     self.playerActions[self.players[p_uuid]["name"]] = "logged out"
