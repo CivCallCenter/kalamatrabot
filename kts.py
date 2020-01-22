@@ -33,8 +33,6 @@ buffer = 10
 mc_q = queue.Queue(buffer)
 ds_q = queue.Queue(buffer)
 
-relaySenderID = False
-
 def clean_text_for_discord(text):
     text = text.replace("_", "\_")
     text = text.replace("*", "\*")
@@ -279,6 +277,12 @@ class OliveClientProtocol(SpawningClientProtocol):
                     self.send_chat("/tell " + package["name"] + " " + package["content"])
             elif package["key"] == "shutdown":
                 reactor.stop()
+            elif package["key"] == "togglecsorelay":
+                self.relaySenderID = not self.relaySenderID
+                if self.relaySenderID:
+                    ds_q.put({"key":"relay", "channel":package["channel"], "content":"cso id relay turned on"})
+                else:
+                    ds_q.put({"key":"relay", "channel":package["channel"], "content":"cso id relay turned off"})
             else:
                 print (package)
 
@@ -458,13 +462,7 @@ async def getschematic(ctx, schematicfile):
 @kdb.command(pass_context=True)
 async def togglecsorelay(ctx):
     """toggles whether or not the cso is specified in message relays"""
-    relaySenderID = not relaySenderID
-    if relaySenderID:
-        await ctx.channel.send("cso relay turned on")
-    else:
-        await ctx.channel.send("cso relay turned off")
-
-
+    mc_q.put({"key":"togglecsorelay", "channel":ctx.channel})
 
 @kdb.command(pass_context=True)
 async def respond(ctx):
