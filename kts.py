@@ -272,7 +272,7 @@ class OliveClientProtocol(SpawningClientProtocol):
             if package["key"] == "debug":
                 ds_q.put({"key":"relay", "channel":package["channel"], "content":"debug relay"})
             elif package["key"] == "messagerelay":
-                if relaySenderID:
+                if self.relaySenderID:
                     self.send_chat("/tell " + package["name"] + " " + "CSO#" + package["cso"] + ": " + package["content"])
                 else:
                     self.send_chat("/tell " + package["name"] + " " + package["content"])
