@@ -222,7 +222,7 @@ class OliveClientProtocol(SpawningClientProtocol):
                                             "login_time": login_time}
                     if print_player_login_logout:
                         print (timestring() + str(p_player_name) + " joined the game")
-                self.playerActions[self.players[p_uuid]["name"]] = "logged in"
+                    self.playerActions[self.players[p_uuid]["name"]] = "logged in"
             elif p_action == 1:  # UPDATE_GAMEMODE
                 p_gamemode = buff.unpack_varint()
                 if p_uuid in self.players:
@@ -240,7 +240,7 @@ class OliveClientProtocol(SpawningClientProtocol):
                 if p_uuid in self.players:
                     self.players[p_uuid]['display_name'] = p_display_name
             elif p_action == 4:  # REMOVE_PLAYER
-                if p_uuid in self.players:
+                if p_uuid in self.players and self.players[p_uuid]["name"]["ping"] != -1:
                     if print_player_login_logout:
                         print (timestring() + self.players[p_uuid]["name"] + " left the game")
                     self.playerActions[self.players[p_uuid]["name"]] = "logged out"
