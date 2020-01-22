@@ -213,14 +213,15 @@ class OliveClientProtocol(SpawningClientProtocol):
                     p_display_name = buff.unpack_chat()
                 else:
                     p_display_name = None
-                self.players[p_uuid] = {"name": p_player_name,
-                                        "properties": p_properties,
-                                        "gamemode": p_gamemode,
-                                        "ping": p_ping,
-                                        "display_name": p_display_name,
-                                        "login_time": login_time}
-                if print_player_login_logout:
-                    print (timestring() + str(p_player_name) + " joined the game")
+                if p_ping != -1:
+                    self.players[p_uuid] = {"name": p_player_name,
+                                            "properties": p_properties,
+                                            "gamemode": p_gamemode,
+                                            "ping": p_ping,
+                                            "display_name": p_display_name,
+                                            "login_time": login_time}
+                    if print_player_login_logout:
+                        print (timestring() + str(p_player_name) + " joined the game")
                 self.playerActions[self.players[p_uuid]["name"]] = "logged in"
             elif p_action == 1:  # UPDATE_GAMEMODE
                 p_gamemode = buff.unpack_varint()
