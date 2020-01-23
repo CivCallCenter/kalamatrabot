@@ -339,7 +339,7 @@ async def motd(ctx):
 @kdb.command(pass_context=True)
 async def welcomeadd(ctx, *, content):
     """adds a welcome message to the list"""
-    with open ("welcomes.txt", "a+") as welcomes:
+    with open ("welcomemessages.txt", "a+") as welcomes:
         welcomes.write(content + "\n")
     await ctx.channel.send("added welcome message")
 
@@ -347,7 +347,7 @@ async def welcomeadd(ctx, *, content):
 async def welcomeget(ctx):
     """returns current welcome messages"""
     i = ""
-    with open ("welcomes.txt", "r") as welcomes:
+    with open ("welcomemessages.txt", "r") as welcomes:
         j = 1
         for welcome in welcomes.readlines():
             if len (i + str (j) + ". " + welcome) > 1999:
@@ -374,14 +374,14 @@ async def welcomeremove(ctx, *, content):
     except:
         await ctx.channel.send("cannot convert to int (probably)")
         return
-    with open ("welcomes.txt", "r") as welcomes:
+    with open ("welcomemessages.txt", "r") as welcomes:
         w = welcomes.readlines()
         try:
             del w[i-1]
         except:
             await ctx.channel.send("list index out of range (probably)")
             return
-    with open ("welcomes.txt", "w") as welcomes:
+    with open ("welcomemessages.txt", "w") as welcomes:
         for line in w:
             welcomes.write(line)
     await ctx.channel.send("successfully removed message (probably)")
