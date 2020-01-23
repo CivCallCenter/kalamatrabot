@@ -72,7 +72,10 @@ class OliveClientProtocol(SpawningClientProtocol):
 
     #serverbound packets
     def send_chat(self, text):
-        self.send_packet("chat_message", self.buff_type.pack_string(text))
+        if len(text) > 225:
+            print ("message too long")
+        else:
+            self.send_packet("chat_message", self.buff_type.pack_string(text))
 
     #clientbound packets
     def packet_chat_message(self, buff):
@@ -436,9 +439,6 @@ def mc_main():
         factory = yield factory.connect(host, port)
     except Exception as e:
         print(e)
-
-def mc_error(err):
-    raise err
 
 if __name__ == "__main__":
     mc_main()
