@@ -67,7 +67,6 @@ class OliveClientProtocol(SpawningClientProtocol):
         self.welcomeLog = {}
         self.lastSentTo = None
         print ("oliveclientprotocol setup debug message")
-        self.ticker.add_loop(10, self.process_mc_q)
         self.lastLogTime = time.time()
         self.relaySenderID = False
 
@@ -168,6 +167,7 @@ class OliveClientProtocol(SpawningClientProtocol):
     #callbacks
     def player_joined(self):
         print (timestring() + "joined the game as " + self.factory.profile.display_name + ".")
+        self.ticker.add_loop(10, self.process_mc_q)
 
     def send_welcome_message1(self, message):
         name = self.newplayers.pop(0)
