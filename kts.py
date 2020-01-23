@@ -29,7 +29,7 @@ from twisted.internet.protocol import ReconnectingClientFactory
 
 prefix = "%"
 
-buffer = 10
+buffer = 256
 mc_q = queue.Queue(buffer)
 ds_q = queue.Queue(buffer)
 
@@ -43,7 +43,7 @@ def clean_text_for_discord(text):
 # quarry bot setup #
 ####################
 
-playerLogInterval = 4
+playerLogInterval = 2
 
 print_player_login_logout = False
 
@@ -67,7 +67,7 @@ class OliveClientProtocol(SpawningClientProtocol):
         self.welcomeLog = {}
         self.lastSentTo = None
         print ("oliveclientprotocol setup debug message")
-        self.ticker.add_loop(40, self.process_mc_q)
+        self.ticker.add_loop(10, self.process_mc_q)
         self.lastLogTime = time.time()
         self.relaySenderID = False
 
@@ -301,7 +301,7 @@ async def process_ds_q():
             except KeyError:
                 print ("package error")
                 print (package)
-        await asyncio.sleep(2)
+        await asyncio.sleep(0.5)
     print ("discord dead how will you recover retard")
 
 @kdb.event
