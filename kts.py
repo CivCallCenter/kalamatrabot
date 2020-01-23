@@ -316,7 +316,7 @@ async def on_message(ctx):
         if ctx.author.id == kdb.user.id:
             return
         elif ctx.content.startswith(prefix):
-            await kdb.process_commands(ctx.content)
+            await kdb.process_commands(ctx)
         elif ctx.channel.category.id == relayCategory:
             mc_q.put({"key":"messagerelay", "name":str(ctx.channel.name), "content":ctx.content, "cso":str(ctx.author.discriminator)})
         else:
