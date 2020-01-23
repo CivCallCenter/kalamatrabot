@@ -335,11 +335,6 @@ async def motd(ctx):
     """returns the message of the day"""
     await ctx.channel.send(getmotd())
 
-@kdb.command(pass_context=True)
-async def wiard(ctx, *, content):
-    """wiardifies a message"""
-    await ctx.channel.send(wiardify(content))
-
 #discord welcome messages
 @kdb.command(pass_context=True)
 async def welcomeadd(ctx, *, content):
