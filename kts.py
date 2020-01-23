@@ -65,6 +65,7 @@ class OliveClientProtocol(SpawningClientProtocol):
         self.playerActions = {}
         self.newplayers = []
         self.welcomeLog = {}
+        self.lastSentTo = None
         print ("oliveclientprotocol setup debug message")
         self.ticker.add_loop(40, self.process_mc_q)
         self.lastLogTime = time.time()
@@ -93,6 +94,10 @@ class OliveClientProtocol(SpawningClientProtocol):
             except:
                 welcome = "(no recorded welcome message for this player)"
             ds_q.put({"key":"relaymessage", "name":name, "content":" ".join(l_text[2:]), "welcome":welcome})
+        elif str(p_text).lower() == "that player is ignoring you.":
+            ds_q.put({"key":"relaywarning", "channel":self.lastSentTo, "content":self.lastSentTo + " is ignoring us"})
+        elif str(p_text).lower() == "no player exists with that name.":
+            ds_q.put({"key":"relaywarning", "channel":self.lastSentTo, "content":self.lastSentTo + " is not online"})
 
     def packet_player_list_item(self, buff):
         logTime = int (time.time())
@@ -183,6 +188,7 @@ class OliveClientProtocol(SpawningClientProtocol):
                     self.send_chat("/tell " + package["name"] + " " + "CSO#" + package["cso"] + ": " + package["content"])
                 else:
                     self.send_chat("/tell " + package["name"] + " " + package["content"])
+                self.lastSentTo = package["name"]
             elif package["key"] == "shutdown":
                 reactor.stop()
             elif package["key"] == "togglecsorelay":
@@ -278,6 +284,12 @@ async def process_ds_q():
                         channel = search_relay_channel(package["name"])
                         await channel.send(clean_text_for_discord(package["welcome"]))
                         await channel.send("**" + clean_text_for_discord(package["name"]) + "**: " + clean_text_for_discord(package["content"]))
+                elif package["key"] == "relaywarning":
+                    channel = search_relay_channel(package["name"])
+                    if channel:
+                        await channel.send(clean_text_for_discord(package["content"]))
+                    else:
+                        print (package["content"])
                 elif package["key"] == "loginlogout":
                     for player in package["actions"].keys():
                         channel = search_relay_channel(player)
@@ -406,11 +418,11 @@ async def relaykill(ctx, *, content="this"):
 async def debug(ctx):
     """debug commands"""
 
-@debug.command(pass_context=True)
-async def shutdown(ctx):
-    """shuts the bot down"""
-    mc_q.put({"key": "shutdown"})
-    await kdb.close()
+##@debug.command(pass_context=True)
+##async def shutdown(ctx):
+##    """shuts the bot down"""
+##    mc_q.put({"key": "shutdown"})
+##    await kdb.close()
 
 @debug.command(pass_context=True)
 async def mc(ctx):
