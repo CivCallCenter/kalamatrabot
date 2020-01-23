@@ -95,9 +95,9 @@ class OliveClientProtocol(SpawningClientProtocol):
                 welcome = "(no recorded welcome message for this player)"
             ds_q.put({"key":"relaymessage", "name":name, "content":" ".join(l_text[2:]), "welcome":welcome})
         elif str(p_text).lower() == "that player is ignoring you.":
-            ds_q.put({"key":"relaywarning", "channel":self.lastSentTo, "content":self.lastSentTo + " is ignoring us"})
+            ds_q.put({"key":"relaywarning", "name":self.lastSentTo, "content":self.lastSentTo + " is ignoring us"})
         elif str(p_text).lower() == "no player exists with that name.":
-            ds_q.put({"key":"relaywarning", "channel":self.lastSentTo, "content":self.lastSentTo + " is not online"})
+            ds_q.put({"key":"relaywarning", "name":self.lastSentTo, "content":self.lastSentTo + " is not online"})
 
     def packet_player_list_item(self, buff):
         logTime = int (time.time())
