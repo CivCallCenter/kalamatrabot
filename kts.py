@@ -39,6 +39,9 @@ def clean_text_for_discord(text):
     text = text.replace("~~", "\~~")
     return text
 
+bannedStrings = ["\n",
+                 "big chungus"]
+
 ####################
 # quarry bot setup #
 ####################
@@ -321,7 +324,14 @@ async def on_message(ctx):
         elif ctx.content.startswith(prefix):
             await kdb.process_commands(ctx)
         elif ctx.channel.category.id == relayCategory:
-            mc_q.put({"key":"messagerelay", "name":str(ctx.channel.name), "content":ctx.content, "cso":str(ctx.author.discriminator)})
+            send = True
+            for i in bannedStrings:
+                if i in ctx.content.lower():
+                    send = False
+            if send:
+                mc_q.put({"key":"messagerelay", "name":str(ctx.channel.name), "content":ctx.content, "cso":str(ctx.author.discriminator)})
+            else:
+                ctx.channel.send("message contained illegal strings")
         else:
             lower_content = ctx.content.lower()
     except AttributeError:
