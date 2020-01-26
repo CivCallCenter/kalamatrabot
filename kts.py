@@ -73,7 +73,7 @@ class OliveClientProtocol(SpawningClientProtocol):
         print ("oliveclientprotocol setup debug message")
         self.lastLogTime = time.time()
         self.relaySenderID = False
-        self.ticker.add_loop(120, self.update_player_list)
+        self.ticker.add_loop(40, self.update_player_list)
 
     #serverbound packets
     def send_chat(self, text):
@@ -347,7 +347,9 @@ async def on_message(ctx):
                 if i in ctx.content.lower():
                     send = False
             if send:
-                mc_q.put({"key":"messagerelay", "name":str(ctx.channel.name).replace('🟢',''), "content":ctx.content, "cso":str(ctx.author.discriminator)})
+                mc_q.put({"key":"messagerelay", "name":str(ctx.channel.name).replace('🟢',''),
+                          "content":ctx.content.replace('$NAME', str(ctx.channel.name).replace('🟢','')),
+                          "cso":str(ctx.author.discriminator)})
             else:
                 await ctx.channel.send("message contained illegal strings")
         else:
