@@ -387,7 +387,7 @@ async def welcomeremove(ctx, *, content):
     except:
         if content == "all":
             with open ("welcomemessages.txt", "w") as welcomes:
-                welcomes.write()
+                welcomes.write("")
             await ctx.channel.send("removed all welcomes (probably)")
         else:
             await ctx.channel.send("cannot convert to int (probably)")
