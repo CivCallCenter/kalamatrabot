@@ -85,7 +85,7 @@ class OliveClientProtocol(SpawningClientProtocol):
     #clientbound packets
     def packet_chat_message(self, buff):
         p_text = buff.unpack_chat()
-        p_position = buff.unpack("B")
+        # p_position = buff.unpack("B")
         print(timestring() + str (p_text))
         l_text = str(p_text).split()
         if " ".join(l_text[1:]) == "is brand new!":
