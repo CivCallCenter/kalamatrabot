@@ -380,10 +380,10 @@ async def playerlog(ctx, *, content):
 
 @kdb.command(pass_context=True)
 async def welcomeremove(ctx, *, content):
-    """removes a given welcome messages"""
+    """removes the welcome messages at the given indices (space separated)"""
     w = []
     try:
-        i = int(content)
+        remove_indices = list(map(int, content.split()))
     except:
         if content == "all":
             with open ("welcomemessages.txt", "w") as welcomes:
@@ -392,13 +392,17 @@ async def welcomeremove(ctx, *, content):
         else:
             await ctx.channel.send("cannot convert to int (probably)")
         return
+    failures = 0
     with open ("welcomemessages.txt", "r") as welcomes:
         w = welcomes.readlines()
-        try:
-            del w[i-1]
-        except:
-            await ctx.channel.send("list index out of range (probably)")
-            return
+        for i in remove_indices:
+            try:
+                del w[i-1]
+            except:
+                if failures == 0:  # only show error once
+                    await ctx.channel.send("list index %i out of range (probably)" % i)
+                failures += 1
+    if failures == len(remove_indices): return
     with open ("welcomemessages.txt", "w") as welcomes:
         for line in w:
             welcomes.write(line)
