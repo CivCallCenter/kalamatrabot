@@ -87,7 +87,7 @@ class OliveClientProtocol(SpawningClientProtocol):
         print (timestring() + str (p_text))
         l_text = str(p_text).split()
         if " ".join(l_text[1:]) == "is brand new!":
-            welcome_msg = get_rand_message()
+            welcome_msg = get_rand_message().replace('$NAME', l_text[0])
             ds_q.put({"key":"new player", "name":l_text[0], "msg":welcome_msg})
             self.newplayers.append(l_text[0])
             self.ticker.add_delay(1800, lambda: self.send_welcome_message1(welcome_msg))
