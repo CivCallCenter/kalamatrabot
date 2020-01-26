@@ -395,7 +395,7 @@ async def welcomeremove(ctx, *, content):
     failures = 0
     with open ("welcomemessages.txt", "r") as welcomes:
         w = welcomes.readlines()
-        for i in remove_indices:
+        for i in reversed(remove_indices):
             try:
                 del w[i-1]
             except:
