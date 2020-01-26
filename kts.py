@@ -66,7 +66,6 @@ def get_rand_message():
 class OliveClientProtocol(SpawningClientProtocol):
     def setup(self):
         self.players = {}
-        self.playerActions = {}
         self.newplayers = []
         self.welcomeLog = {}
         self.lastSentTo = None
@@ -131,16 +130,14 @@ class OliveClientProtocol(SpawningClientProtocol):
                     p_display_name = buff.unpack_chat()
                 else:
                     p_display_name = None
-                if p_ping != -1:
-                    self.players[p_uuid] = {"name": p_player_name,
-                                            "properties": p_properties,
-                                            "gamemode": p_gamemode,
-                                            "ping": p_ping,
-                                            "display_name": p_display_name,
-                                            "login_time": login_time}
-                    if print_player_login_logout:
-                        print (timestring() + str(p_player_name) + " joined the game")
-                    self.playerActions[self.players[p_uuid]["name"]] = "logged in"
+                self.players[p_uuid] = {"name": p_player_name,
+                                        "properties": p_properties,
+                                        "gamemode": p_gamemode,
+                                        "ping": p_ping,
+                                        "display_name": p_display_name,
+                                        "login_time": login_time}
+                if print_player_login_logout:
+                    print (timestring() + str(p_player_name) + " joined the game")
             elif p_action == 1:  # UPDATE_GAMEMODE
                 p_gamemode = buff.unpack_varint()
                 if p_uuid in self.players:
@@ -158,15 +155,10 @@ class OliveClientProtocol(SpawningClientProtocol):
                 if p_uuid in self.players:
                     self.players[p_uuid]['display_name'] = p_display_name
             elif p_action == 4:  # REMOVE_PLAYER
-                if p_uuid in self.players and self.players[p_uuid]["ping"] != -1:
+                if p_uuid in self.players:
                     if print_player_login_logout:
                         print (timestring() + self.players[p_uuid]["name"] + " left the game")
-                    self.playerActions[self.players[p_uuid]["name"]] = "logged out"
                     del self.players[p_uuid]
-        if logTime > self.lastLogTime + playerLogInterval:
-            ds_q.put({"key":"loginlogout", "actions":self.playerActions})
-            self.lastLogTime = logTime
-            self.playerActions = {}
 
     def packet_disconnect(self, buff):
         p_text = buff.unpack_chat()
