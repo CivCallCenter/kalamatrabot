@@ -288,7 +288,7 @@ async def process_ds_q():
                         log_message_response(package["name"])
                         await kdb.get_guild(guild).create_text_channel(package["name"], category=kdb.get_channel(relayCategory))
                         channel = search_relay_channel(package["name"])
-                        await channel.send(clean_text_for_discord(package["welcome"]))
+                        await channel.send(clean_text_for_discord(package["m"]))
                         await channel.send("**" + clean_text_for_discord(package["name"]) + "**: " + clean_text_for_discord(package["content"]))
                 elif package["key"] == "relaywarning":
                     channel = search_relay_channel(package["name"])
@@ -352,23 +352,24 @@ async def motd(ctx):
 @kdb.command(pass_context=True)
 async def welcomeadd(ctx, *, content):
     """adds a welcome message to the list"""
-    with open ("welcomemessages.txt", "a+") as welcomes:
-        welcomes.write(content + "\n")
-    await ctx.channel.send("added welcome message")
+    if len(content) > 225:
+        await ctx.channel.send("Message is too long")
+    else:
+        with open ("welcomemessages.txt", "a+") as welcomes:
+            welcomes.write(content + "\n")
+        await ctx.channel.send("added welcome message")
 
 @kdb.command(pass_context=True)
 async def welcomeget(ctx):
     """returns current welcome messages"""
-    i = ""
-    with open ("welcomemessages.txt", "r") as welcomes:
-        j = 1
-        for welcome in welcomes.readlines():
-            if len (i + str (j) + ". " + welcome) > 1999:
-                await ctx.channel.send(i)
-                i = ""
-            i += (str (j) + ". " + welcome)
-            j += 1
-    await ctx.channel.send(i)
+    output = ""
+    with open("welcomemessages.txt") as file:
+        for i, line in enumerate(file, 1):
+            if len(output + str(i) + ". " + str(line)) > 1999:
+                await ctx.channel.send(output)
+                output = ""
+            output += str(i) + ". " + str(line)
+    await ctx.channel.send(output)
 
 @kdb.command(pass_context=True)
 async def playerlog(ctx, *, content):
