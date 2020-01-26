@@ -381,10 +381,10 @@ async def playerlog(ctx, *, content):
 
 @kdb.command(pass_context=True)
 async def welcomeremove(ctx, *, content):
-    """removes the welcome messages at the given indices (space separated)"""
+    """removes the welcome messages at the given indices"""
     w = []
     try:
-        remove_indices = list(map(int, content.split()))
+        remove_indices = list(map(int, content.replace(',', '').split()))
     except:
         if content == "all":
             with open ("welcomemessages.txt", "w") as welcomes:
@@ -396,7 +396,7 @@ async def welcomeremove(ctx, *, content):
     failures = 0
     with open ("welcomemessages.txt", "r") as welcomes:
         w = welcomes.readlines()
-        for i in reversed(remove_indices):
+        for i in sorted(remove_indices, reverse=True):
             try:
                 del w[i-1]
             except:
