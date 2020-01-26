@@ -85,7 +85,7 @@ class OliveClientProtocol(SpawningClientProtocol):
     #clientbound packets
     def packet_chat_message(self, buff):
         p_text = buff.unpack_chat()
-        # p_position = buff.unpack("B")
+        p_position = buff.unpack("B")
         print(timestring() + str (p_text))
         l_text = str(p_text).split()
         if " ".join(l_text[1:]) == "is brand new!":
@@ -242,8 +242,8 @@ def getmotd():
                           "i think i'm going to take a meme detox",
                           ])
 
-guild = 669358421891612694
-relayCategory = 671081137870995497
+guild = 613024898024996914
+relayCategory = 665296878254161950
 
 kdb = commands.Bot(command_prefix=prefix, description=getmotd())
 
