@@ -4,6 +4,7 @@ import functools
 import json
 import logging
 import math
+import pprint
 import queue
 import random
 import re
@@ -72,11 +73,12 @@ class OliveClientProtocol(SpawningClientProtocol):
         print ("oliveclientprotocol setup debug message")
         self.lastLogTime = time.time()
         self.relaySenderID = False
+        self.ticker.add_loop(120, self.update_player_list)
 
     #serverbound packets
     def send_chat(self, text):
         if len(text) > 225:
-            print ("message too long")
+            print("message too long")
         else:
             self.send_packet("chat_message", self.buff_type.pack_string(text))
 
@@ -84,7 +86,7 @@ class OliveClientProtocol(SpawningClientProtocol):
     def packet_chat_message(self, buff):
         p_text = buff.unpack_chat()
         p_position = buff.unpack("B")
-        print (timestring() + str (p_text))
+        print(timestring() + str (p_text))
         l_text = str(p_text).split()
         if " ".join(l_text[1:]) == "is brand new!":
             welcome_msg = get_rand_message().replace('$NAME', l_text[0])
@@ -168,7 +170,7 @@ class OliveClientProtocol(SpawningClientProtocol):
 
     def packet_disconnect(self, buff):
         p_text = buff.unpack_chat()
-        print (timestring() + str (p_text))
+        print(timestring() + str (p_text))
 
     #callbacks
     def player_joined(self):
@@ -182,6 +184,12 @@ class OliveClientProtocol(SpawningClientProtocol):
         with open ("welcomelog.txt", "a+") as log:
             log.write(name + " : " + message)
 
+    def update_player_list(self):
+        names = []
+        players = self.players
+        for p in players:
+            names.append(players[p]['name'].casefold())
+        ds_q.put({"key": "player list update", "list": names})
     #methods
     def process_mc_q(self):
         if not mc_q.empty():
@@ -234,8 +242,8 @@ def getmotd():
                           "i think i'm going to take a meme detox",
                           ])
 
-guild = 613024898024996914
-relayCategory = 665296878254161950
+guild = 669358421891612694
+relayCategory = 671081137870995497
 
 kdb = commands.Bot(command_prefix=prefix, description=getmotd())
 
@@ -245,7 +253,7 @@ def search_relay_channel(name):
     #print ("searching for", name)
     for channel in kdb.get_all_channels():
         if channel.category == kdb.get_channel(relayCategory):
-            if str (channel.name).lower() == name.lower():
+            if str(channel.name).lower().replace('🟢','') == name.lower():
                 #print (channel)
                 return channel
     return None
@@ -270,7 +278,7 @@ async def process_ds_q():
         #print ("discord loop alive")
         if not ds_q.empty():
             package = ds_q.get()
-            #print (package)
+            # print(package)
             try:
                 if package["key"] == "new player":
                     s = "" + package["name"] + " is brand new!\n"+package["msg"]
@@ -288,7 +296,7 @@ async def process_ds_q():
                         log_message_response(package["name"])
                         await kdb.get_guild(guild).create_text_channel(package["name"], category=kdb.get_channel(relayCategory))
                         channel = search_relay_channel(package["name"])
-                        await channel.send(clean_text_for_discord(open('resources/code-of-conduct.txt','r').read().strip())
+                        await channel.send(clean_text_for_discord(open('resources/code-of-conduct.txt','r').read().strip()))
                         await channel.send(clean_text_for_discord(package["m"]))
                         await channel.send("**" + clean_text_for_discord(package["name"]) + "**: " + clean_text_for_discord(package["content"]))
                 elif package["key"] == "relaywarning":
@@ -302,6 +310,15 @@ async def process_ds_q():
                         channel = search_relay_channel(player)
                         if channel:
                             await channel.send(clean_text_for_discord(player+" "+package["actions"][player]))
+                elif package["key"] == "player list update":
+                    for channel in kdb.get_all_channels():
+                        if channel.category == kdb.get_channel(relayCategory):
+                            if str(channel.name).casefold().replace('🟢', '') in package["list"]:
+                                if '🟢' not in channel.name:
+                                    await kdb.get_channel(channel.id).edit(name="🟢" + str(channel.name))
+                            else:
+                                if '🟢' in channel.name:
+                                    await kdb.get_channel(channel.id).edit(name=channel.name.replace('🟢', ''))
                 else:
                     print ("unknown package")
                     print (package)
@@ -330,7 +347,7 @@ async def on_message(ctx):
                 if i in ctx.content.lower():
                     send = False
             if send:
-                mc_q.put({"key":"messagerelay", "name":str(ctx.channel.name), "content":ctx.content, "cso":str(ctx.author.discriminator)})
+                mc_q.put({"key":"messagerelay", "name":str(ctx.channel.name).replace('🟢',''), "content":ctx.content, "cso":str(ctx.author.discriminator)})
             else:
                 await ctx.channel.send("message contained illegal strings")
         else:
