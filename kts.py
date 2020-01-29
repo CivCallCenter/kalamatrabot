@@ -289,7 +289,7 @@ async def process_ds_q():
                         await kdb.get_guild(guild).create_text_channel(package["name"], category=kdb.get_channel(relayCategory))
                         channel = search_relay_channel(package["name"])
                         await channel.send(clean_text_for_discord(open('resources/code-of-conduct.txt','r').read().strip()))
-                        await channel.send(clean_text_for_discord(package["content"]))
+                        await channel.send(clean_text_for_discord(package["welcome"]))
                         await channel.send("**" + clean_text_for_discord(package["name"]) + "**: " + clean_text_for_discord(package["content"]))
                 elif package["key"] == "relaywarning":
                     channel = search_relay_channel(package["name"])
