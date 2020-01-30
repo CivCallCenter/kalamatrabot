@@ -239,7 +239,7 @@ relayCategory = 665296878254161950
 
 kdb = commands.Bot(command_prefix=prefix, description=getmotd())
 
-brandNewMsgChannel = 664474265277693982
+brandNewMsgChannel = 672507381330083907
 
 def search_relay_channel(name):
     #print ("searching for", name)
