@@ -425,7 +425,7 @@ async def welcomeremove(ctx, *, content):
 async def welcomeedit(ctx, *, content):
     """edits the welcome messages at the given indices"""
     edit = int (content.split(" ")[0]) - 1
-
+    print (edit)
     with open ("welcomemessages.txt", "r") as welcomes:
         w = welcomes.readlines()
         w[edit] = " ".join(content.split(" ")[1:])
