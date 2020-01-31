@@ -421,6 +421,19 @@ async def welcomeremove(ctx, *, content):
             welcomes.write(line)
     await ctx.channel.send("successfully removed message (probably)")
 
+@kdb.command(pass_context=True)
+async def welcomeedit(ctx, *, content):
+    """edits the welcome messages at the given indices"""
+    edit = int (content.split(" ")[0]) - 1
+
+    with open ("welcomemessages.txt", "r") as welcomes:
+        w = welcomes.readlines()
+        w[edit] = " ".join(content.split(" ")[1:])
+    with open ("welcomemessages.txt", "w") as welcomes:
+        for line in w:
+            welcomes.write(line)
+    await ctx.channel.send("successfully edited message (probably)")   
+ 
 #relay channel management
 @kdb.command(pass_context=True)
 async def relayspawn(ctx, *, content):
