@@ -340,7 +340,7 @@ async def on_message(ctx):
                     send = False
             if send:
                 mc_q.put({"key":"messagerelay", "name":str(ctx.channel.name).replace('🟢',''),
-                          "content":ctx.content.replace('$NAME', str(ctx.channel.name).replace('🟢','')),
+                          "content":ctx.content.replace('$NAME', str(ctx.channel.name).replace('🟢','')).replace("$NEEDHELP", "Do you need any help getting started?"),
                           "cso":str(ctx.author.discriminator)})
             else:
                 await ctx.channel.send("message contained illegal strings")
